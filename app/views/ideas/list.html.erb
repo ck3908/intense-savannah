@@ -1,0 +1,32 @@
+<% content_for :title do %>
+    Listing Ideas
+<% end %>
+<div>
+  <%= form_tag({controller:  "ideas", action:  "list"}, method: "get") do %>
+    Ordering options:
+    <%= select_tag "ordering", options_for_select(@columns, selected: params[:ordering]) %><br/>
+    <%= label_tag :order_asc, "ascending" %>
+    <%= radio_button_tag :order, :ASC, @order == "ASC" %>
+    <%= label_tag :order_dsc, "descending" %>
+    <%= radio_button_tag :order, :DESC, @order == "DESC" %>
+    <%= submit_tag "sort" %>
+<% end %>
+</div>
+<%= will_paginate @topics %>
+<!-- becareful if using wrong html erb code, otherwise output to screen -->
+<% @topics.each do |topic| %>
+    <section style="border: 1px solid black;padding: 10px;margin: 10px">
+      <h1><%= link_to topic.title, ideas_id_path(topic.id) %><br/></h1>
+      Sector: <%= topic.sector %> <br/>
+      Made By: <%= topic.made_by %><br/>
+      Content: <%= topic.content %><br/>
+      Time created: <%= time_ago_in_words(topic.created_at) %> ago <br/><br/>
+      Average Review Rating: <%= topic.reviews.average(:rating).to_i %><br/>
+    </section>
+
+<% end %>
+
+<%= will_paginate @topics %>
+
+<!-- for debugging show params only on commit -->
+

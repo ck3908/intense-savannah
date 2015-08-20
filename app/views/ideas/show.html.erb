@@ -1,0 +1,81 @@
+<p id="notice"><%= notice %></p>
+
+<p>
+  <strong>Title:</strong>
+  <%= @topic.title %><br/>
+  Average Rating:
+  <% @topic.reviews.average(:rating).to_i.times do %>
+      <%= image_tag "thumbsup.jpg", size: "50x50" %>
+  <% end %>
+</p>
+
+<p>
+  <strong>Sector:</strong>
+  <%= @topic.sector %>
+</p>
+
+<p>
+  <strong>Content:</strong>
+  <%= @topic.content %>
+</p>
+
+<p>
+  <strong>Made by:</strong>
+  <%= @topic.made_by %>
+</p>
+
+<%= link_to 'Back', ideas_path %>
+
+<% @topic.reviews.each do |review| %>
+    <hr>
+    <div>
+     <!-- delete path is not explicitly defined in routes but we can use method :delete to call appropriate destroy action -->
+     <!-- need to pass in two params arguments for path so the delete method can look up the topic and review ids to destroy -->
+    <b> <%= review.title %></b>
+     <% if user_signed_in? && current_user.admin? %>
+      <%= link_to ' Remove - By Admin User', topic_review_path(review.topic, review), data: { confirm: 'delete' }, method: :delete %>
+     <% end %>
+    <br/>
+    <%= time_ago_in_words(review.created_at) %> ago, by
+    <b> <%= review.author %></b><br/>
+    <p> <%= review.content %></p>
+     <!-- rating: <%#= review.rating %>  -->
+      <% review.rating.to_i.times do %>
+        <%= image_tag "thumbsup.jpg", size: "50x50" %>
+      <% end %>
+
+    </div>
+
+<% end %>
+
+<hr><hr>
+
+<!-- rendering form from another directory, would work if I was using it -->
+<%#= render :partial => 'reviews/form' %>
+
+<!-- create new form by using @topic model and create new review using build -->
+<p> Write a Review </p>
+
+<%= form_for([@topic, @topic.reviews.build]) do |f| %>
+
+    <div class="field">
+      <%= f.label :title %><br>
+      <%= f.text_field :title %>
+    </div>
+    <div class="field">
+      <%= f.label :author %><br>
+      <%= f.text_field :author, value:  if user_signed_in? then current_user.email.split("@").first else "" end %>
+    </div>
+    <div class="field">
+      <%= f.label :content %><br>
+      <%= f.text_area :content, style: "width:880px; height:150px;" %>
+    </div>
+    <div class="field">
+      <%= f.label :rating %><%= " (10 means best rating)" %><br>
+      <%= f.select(:rating, options_for_select(1..10)) %>
+    </div>
+    <div class="actions">
+      <%= f.submit %>
+    </div>
+<% end %>
+

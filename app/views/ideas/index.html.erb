@@ -1,0 +1,49 @@
+<% content_for :title do %>
+    Ideas
+<% end %>
+
+<h1>Listing topics</h1>
+
+<%= will_paginate @topics %>
+
+<table>
+  <thead>
+  <tr>
+    <th>Title</th>
+    <th>Sector</th>
+    <th>Content</th>
+    <th>Made by</th>
+    <th>Average Rating</th>
+    <th>Time created</th>
+    <th></th>
+    <th></th>
+    <th></th>
+  </tr>
+  </thead>
+
+  <tbody>
+  <% @topics.each do |topic| %>
+      <tr>
+        <!-- change link to ideas_id_path and pass to it the id of the topic to show -->
+        <td><%= link_to topic.title, ideas_id_path(topic.id) %></td>  <!-- clickable link to show page for each topic -->
+        <td><%= topic.sector %></td>
+        <td><%= truncate(topic.content, length: 90) %></td>
+        <td><%= topic.made_by %></td>
+        <td><%= topic.reviews.average(:rating)? topic.reviews.average(:rating).to_i : ""  %></td>
+        <td><%= time_ago_in_words(topic.created_at) %> ago </td>
+
+        <!-- modify access to edit and destroy and modify path to ideas_index -->
+        <td><%= link_to 'Show', ideas_id_path(topic.id) %></td>
+        <% if user_signed_in? && current_user.admin? %>
+            <td><%= link_to 'Edit', edit_topic_path(topic) %></td>
+            <td><%= link_to 'Destroy', topic, method: :delete, data: { confirm: 'Are you sure?' } %></td>
+        <% end %>
+      </tr>
+  <% end %>
+  </tbody>
+</table>
+
+<br>
+<%= will_paginate @topics %>
+<br>
+<%= link_to 'New Topic', new_idea_path %> | <%= if !user_signed_in? then "User must sign in first" else "Click to start new Topic" end %>

@@ -1,0 +1,18 @@
+<% content_for :title do %>
+	Ideas
+<% end %>
+
+
+
+<%=  @topics.each do |topic| %>
+    <section style="border: 1px solid black;padding: 10px;margin: 10px">
+      <h1><%= topic.title %><br/></h1>
+      Sector: <%= topic.sector %> <br/>
+      Made by: <%= topic.made_by %><br/>
+      Content: <%= topic.content %><br/>
+      Time created: <%= topic.created_at %>
+
+    </section>
+<% end %>
+
+
